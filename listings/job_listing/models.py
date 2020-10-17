@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from authentication.models import CustomUser
 from django.utils import timezone
+from django.db.models.signals import pre_save
+
+from listings.utils import unique_slug_generator
 
 
 class Category(models.Model):
@@ -39,7 +42,7 @@ class Job(models.Model):
     title = models.CharField(max_length=250)
     dateline = models.DateField()
     description = models.TextField()
-    slug = models.SlugField(max_length=250, unique_for_date='published')
+    slug = models.SlugField(max_length=250, null=True, blank=True)
     published = models.DateTimeField(default=timezone.now)
     author = models.ForeignKey(
         to=CustomUser, on_delete=models.CASCADE, related_name='job_author')
@@ -71,7 +74,12 @@ class Job(models.Model):
         return self.title
 
 
-    
+def slug_generator(sender, instance, *args, **kwargs):
+    if not instance.slug:
+        instance.slug = unique_slug_generator(instance)
+
+pre_save.connect(slug_generator, sender=Job)
+
 
 class Contact(models.Model):
     first_name = models.CharField(max_length=100)

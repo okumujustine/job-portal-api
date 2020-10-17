@@ -29,7 +29,8 @@ class JobSerializer(serializers.ModelSerializer):
             'company_location',
             'experience',
             'vacancies',
-            'experience_status'
+            'experience_status',
+            'slug'
         )
         model = Job
 
