@@ -1,0 +1,108 @@
+from django.db import models
+from django.contrib.auth.models import User
+from authentication.models import CustomUser
+from django.utils import timezone
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
+class Job(models.Model):
+
+    STATUS = (
+        ('draft', 'Draft'),
+        ('published', 'Published'),
+    )
+
+    EXPERIENCE_STATUS = (
+        ('month', 'Month'),
+        ('year', 'Year'),
+    )
+
+    GENDER = (
+    ('Male', 'Male'),
+    ('Female', 'Female'),
+    ('Any', 'Any'),
+    )
+
+    JOB_TYPE = (
+    ('Part Time', 'Part Time'),
+    ('Full Time', 'Full Time'),
+    ('Freelance', 'Freelancer'),
+    )
+
+    category = models.ManyToManyField(Category)
+    title = models.CharField(max_length=250)
+    dateline = models.DateField()
+    description = models.TextField()
+    slug = models.SlugField(max_length=250, unique_for_date='published')
+    published = models.DateTimeField(default=timezone.now)
+    author = models.ForeignKey(
+        to=CustomUser, on_delete=models.CASCADE, related_name='job_author')
+    status = models.CharField(
+        max_length=10, choices=STATUS, default='published')
+    gender = models.CharField(choices=GENDER, max_length=30, null=True)
+    tag_one = models.CharField(max_length=100, null=True, blank=True)
+    tag_two = models.CharField(max_length=100, null=True, blank=True)
+    tag_three = models.CharField(max_length=100, null=True, blank=True)
+    tag_four = models.CharField(max_length=100, null=True, blank=True)
+    tag_five = models.CharField(max_length=100, null=True, blank=True)
+    company_logo = models.ImageField(blank=True, upload_to='media', null=True)
+    salary_range_from = models.CharField(max_length=100)
+    salary_range_to = models.CharField(max_length=100, null=True, blank=True)
+    salary_currency = models.CharField(max_length=100)
+    employment_status = models.CharField(choices=JOB_TYPE, max_length=10)
+    company_name = models.CharField(max_length=255, default="anonymous")
+    company_location = models.CharField(max_length=255, default="anonymous")
+    experience = models.CharField(max_length=100)
+    vacancies = models.CharField(max_length=100)
+    experience_status =  models.CharField(choices=EXPERIENCE_STATUS, max_length=100) 
+    
+
+
+    class Meta:
+        ordering = ('-published',)
+
+    def __str__(self):
+        return self.title
+
+
+    
+
+class Contact(models.Model):
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    email = models.EmailField()
+    subject = models.CharField(max_length=100)
+    message = models.TextField()
+
+    def __str__(self):
+        return self.email
+
+
+
+class ApplyJob(models.Model):
+    APPLICANT_STATUS = (
+        ('recieved', 'Recieved'),
+        ('rejected', 'Rejected'),
+        ('approved', 'Approved'),
+    )
+    author = models.ForeignKey(
+        to=CustomUser, on_delete=models.CASCADE, related_name='job_applier')
+    name = models.CharField(max_length=50)
+    job = models.ForeignKey(
+        to=Job, on_delete=models.CASCADE, related_name='apply_author')
+    name = models.CharField(max_length=50)
+    email = models.EmailField()
+    resume_file = models.FileField(null=True)
+    resume_text = models.TextField(null=True)
+    status = models.CharField(
+        max_length=10, choices=APPLICANT_STATUS, default='recieved')
+    
+
+    def __str__(self):
+        return self.name
