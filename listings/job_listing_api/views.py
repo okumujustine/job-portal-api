@@ -1,7 +1,12 @@
-from rest_framework import generics
-from job_listing.models import Job
-from .serializers import JobSerializer
+from rest_framework import generics, views
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.response import Response
 from rest_framework import permissions
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
+
+from job_listing.models import Job
+from .serializers import JobSerializer, ApplyJobSerializer
 
 
 # OPTION 1
@@ -48,3 +53,16 @@ class JobFilterView(generics.ListAPIView):
     def get_queryset(self):
         qs = filter(self.request)
         return qs
+
+
+class ApplyJob(views.APIView):
+    permission_classes = [IsAuthenticated, ]
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post(self, request, *args, **kwargs):
+        file_serializer = ApplyJobSerializer(data=request.data)
+        if file_serializer.is_valid():
+            file_serializer.save()
+            return Response(file_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)

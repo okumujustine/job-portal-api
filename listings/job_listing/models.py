@@ -27,15 +27,15 @@ class Job(models.Model):
     )
 
     GENDER = (
-    ('Male', 'Male'),
-    ('Female', 'Female'),
-    ('Any', 'Any'),
+        ('Male', 'Male'),
+        ('Female', 'Female'),
+        ('Any', 'Any'),
     )
 
     JOB_TYPE = (
-    ('Part Time', 'Part Time'),
-    ('Full Time', 'Full Time'),
-    ('Freelance', 'Freelancer'),
+        ('Part Time', 'Part Time'),
+        ('Full Time', 'Full Time'),
+        ('Freelance', 'Freelancer'),
     )
 
     category = models.ManyToManyField(Category)
@@ -63,9 +63,8 @@ class Job(models.Model):
     company_location = models.CharField(max_length=255, default="anonymous")
     experience = models.CharField(max_length=100)
     vacancies = models.CharField(max_length=100)
-    experience_status =  models.CharField(choices=EXPERIENCE_STATUS, max_length=100) 
-    
-
+    experience_status = models.CharField(
+        choices=EXPERIENCE_STATUS, max_length=100)
 
     class Meta:
         ordering = ('-published',)
@@ -77,6 +76,7 @@ class Job(models.Model):
 def slug_generator(sender, instance, *args, **kwargs):
     if not instance.slug:
         instance.slug = unique_slug_generator(instance)
+
 
 pre_save.connect(slug_generator, sender=Job)
 
@@ -92,25 +92,24 @@ class Contact(models.Model):
         return self.email
 
 
-
 class ApplyJob(models.Model):
     APPLICANT_STATUS = (
+        ('sent', 'Sent'),
         ('recieved', 'Recieved'),
         ('rejected', 'Rejected'),
         ('approved', 'Approved'),
     )
-    author = models.ForeignKey(
-        to=CustomUser, on_delete=models.CASCADE, related_name='job_applier')
-    name = models.CharField(max_length=50)
+    applicant = models.ForeignKey(
+        to=CustomUser, on_delete=models.CASCADE, related_name='job_applicant')
+    first_name = models.CharField(max_length=50)
     job = models.ForeignKey(
-        to=Job, on_delete=models.CASCADE, related_name='apply_author')
-    name = models.CharField(max_length=50)
+        to=Job, on_delete=models.CASCADE, related_name='job_relatioship')
+    last_name = models.CharField(max_length=50)
     email = models.EmailField()
     resume_file = models.FileField(null=True)
     resume_text = models.TextField(null=True)
     status = models.CharField(
-        max_length=10, choices=APPLICANT_STATUS, default='recieved')
-    
+        max_length=10, choices=APPLICANT_STATUS, default='sent')
 
     def __str__(self):
-        return self.name
+        return self.applicant
