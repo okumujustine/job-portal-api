@@ -112,4 +112,4 @@ class ApplyJob(models.Model):
         max_length=10, choices=APPLICANT_STATUS, default='sent')
 
     def __str__(self):
-        return self.applicant
+        return f'{self.first_name} {self.last_name} - {self.email}'

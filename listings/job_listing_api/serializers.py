@@ -39,4 +39,4 @@ class ApplyJobSerializer(serializers.ModelSerializer):
     class Meta():
         model = ApplyJob
         fields = ('resume_file', 'first_name',
-                  'last_name', 'email', 'job', 'applicant')
+                  'last_name', 'email', 'job')
