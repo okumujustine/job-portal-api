@@ -99,8 +99,6 @@ class ApplyJob(models.Model):
         ('rejected', 'Rejected'),
         ('approved', 'Approved'),
     )
-    job_author = models.ForeignKey(
-        to=CustomUser, on_delete=models.CASCADE, related_name='list_author')
     applicant = models.ForeignKey(
         to=CustomUser, on_delete=models.CASCADE, related_name='job_applicant')
     first_name = models.CharField(max_length=50)
