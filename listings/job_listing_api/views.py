@@ -5,13 +5,13 @@ from rest_framework import permissions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
-from job_listing.models import Job
-from .serializers import JobSerializer, ApplyJobSerializer
+from job_listing.models import Job, ApplyJob
+from .serializers import JobSerializer, ApplyJobSerializer, UserAppliedJobSerializer, GetUserApplicationsSerializer
 
 
 # OPTION 1
 # TODO: change this -> only logged in users should add jobs
-class JobList(generics.ListCreateAPIView):
+class JobListView(generics.ListCreateAPIView):
     queryset = Job.objects.all()
     serializer_class = JobSerializer
     # permission_classes = (permissions.IsAuthenticated,)
@@ -20,12 +20,12 @@ class JobList(generics.ListCreateAPIView):
         return serializer.save(author=self.request.user)
 
 
-class LatestJobs(generics.ListAPIView):
+class LatestJobsView(generics.ListAPIView):
     queryset = Job.objects.all().order_by('-published')[:4]
     serializer_class = JobSerializer
 
 
-class JobDetail(generics.RetrieveUpdateDestroyAPIView):
+class JobDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Job.objects.all()
     serializer_class = JobSerializer
 
@@ -55,7 +55,7 @@ class JobFilterView(generics.ListAPIView):
         return qs
 
 
-class ApplyJob(generics.ListCreateAPIView):
+class ApplyJobView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated, ]
     parser_classes = (MultiPartParser, FormParser)
     serializer_class = ApplyJobSerializer
@@ -64,14 +64,23 @@ class ApplyJob(generics.ListCreateAPIView):
         return serializer.save(applicant=self.request.user)
 
 
-# class ApplyJob(views.APIView):
-#     permission_classes = [IsAuthenticated, ]
-#     parser_classes = (MultiPartParser, FormParser)
+class UserAppliedJobView(views.APIView):
+    serializer_class = UserAppliedJobSerializer
 
-#     def post(self, request, *args, **kwargs):
-#         file_serializer = ApplyJobSerializer(data=request.data)
-#         if file_serializer.is_valid():
-#             file_serializer.save()
-#             return Response(file_serializer.data, status=status.HTTP_201_CREATED)
-#         else:
-#             return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request, format=None):
+        serializer = UserAppliedJobSerializer(data=request.data)
+        if serializer.is_valid():
+            job_id = serializer.data.get("job")
+            applicant_id = serializer.data.get("applicant")
+            userJob = ApplyJob.objects.filter(
+                job=job_id, applicant=applicant_id)
+            user_email = [user.email for user in userJob]
+            return Response(user_email, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetUserApplicationsView(generics.ListAPIView):
+    queryset = ApplyJob.objects.all().order_by('-published')[:4]
+    serializer_class = JobSerializer
+    GetUserApplicationsSerializer

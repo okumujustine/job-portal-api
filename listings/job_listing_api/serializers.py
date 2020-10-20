@@ -40,3 +40,13 @@ class ApplyJobSerializer(serializers.ModelSerializer):
         model = ApplyJob
         fields = ('resume_file', 'first_name',
                   'last_name', 'email', 'job')
+
+
+class UserAppliedJobSerializer(serializers.Serializer):
+    job = serializers.IntegerField()
+    applicant = serializers.IntegerField()
+
+
+class GetUserApplicationsSerializer(serializers.ModelSerializer):
+    class Meta():
+        fields = "__all__"

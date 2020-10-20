@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import (
-	BaseUserManager, AbstractBaseUser, AbstractUser, PermissionsMixin
+    BaseUserManager, AbstractBaseUser, AbstractUser, PermissionsMixin
 )
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
@@ -13,8 +13,8 @@ class CustomAccountManager(BaseUserManager):
             raise ValueError(_('You must provide an email address'))
 
         email = self.normalize_email(email)
-        user = self.model(email=email, first_name=first_name, 
-                             last_name=last_name, **other_fields)
+        user = self.model(email=email, first_name=first_name,
+                          last_name=last_name, **other_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -23,6 +23,7 @@ class CustomAccountManager(BaseUserManager):
         other_fields.setdefault('is_staff', True)
         other_fields.setdefault('is_superuser', True)
         other_fields.setdefault('is_verified', True)
+        other_fields.setdefault('role', 'admin')
 
         if other_fields.get('is_staff') is not True:
             raise ValueError(_('is_staff must be true'))
@@ -33,19 +34,20 @@ class CustomAccountManager(BaseUserManager):
         return self.create_user(email, first_name, last_name, password, **other_fields)
 
 
-
 USER_TYPE_CHOICES = (
-      (1, 'house_agent'),
-      (2, 'job_agent'),
-      (3, 'normal'),
-      (4, 'agent'),
-      (5, 'admin'),
-  )
+    ('employer', 'Employer'),
+    ('employee', 'Employee'),
+    ('admin', 'Admin'),
+)
+
+
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('email address'), unique=True)
     first_name = models.CharField(max_length=150)
     last_name = models.CharField(max_length=150)
     phone = models.CharField(max_length=150)
+    role = models.CharField(choices=USER_TYPE_CHOICES,
+                            max_length=30, default='employee')
     start_date = models.DateTimeField(default=timezone.now)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -54,7 +56,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     objects = CustomAccountManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name','last_name', 'phone']
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'phone']
 
     def __str__(self):
         return self.first_name

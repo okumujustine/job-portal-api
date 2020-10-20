@@ -110,6 +110,8 @@ class ApplyJob(models.Model):
     resume_text = models.TextField(null=True)
     status = models.CharField(
         max_length=10, choices=APPLICANT_STATUS, default='sent')
+    application_created_at = models.DateTimeField(default=timezone.now)
+    application_updated = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f'{self.first_name} {self.last_name} - {self.email}'

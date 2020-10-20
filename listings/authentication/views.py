@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework import generics, status, views
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import AuthenticationFailed
 from django.conf import settings
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -30,9 +31,10 @@ class CustomRedirect(HttpResponsePermanentRedirect):
 
 class RegisterView(generics.GenericAPIView):
     serializer_class = RegisterSerializer
+
     def post(self, request):
         user = request.data
-        serializer=self.serializer_class(data=user)
+        serializer = self.serializer_class(data=user)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         user_data = serializer.data
@@ -41,7 +43,7 @@ class RegisterView(generics.GenericAPIView):
 
         Util.send_activation_link(user, request)
 
-        return Response(user_data,status=status.HTTP_201_CREATED)
+        return Response(user_data, status=status.HTTP_201_CREATED)
 
 
 class VerifyEmail(views.APIView):
@@ -64,26 +66,28 @@ class VerifyEmail(views.APIView):
             if not user.is_verified:
                 user.is_verified = True
                 user.save()
-                return Response({"email":"Successfuly activated"},status=status.HTTP_200_OK)
+                return Response({"email": "Successfuly activated"}, status=status.HTTP_200_OK)
 
-            return Response({"email":"Already activated"},status=status.HTTP_200_OK)
+            return Response({"email": "Already activated"}, status=status.HTTP_200_OK)
 
         except jwt.ExpiredSignature as identifier:
             # send a new link
-             user = CustomUser.objects.get(email=email)
-             Util.send_activation_link(user, request)
-             return Response({"error":"Expired activation link, a new link has been sent to your email account"},status=status.HTTP_400_BAD_REQUEST)
+            user = CustomUser.objects.get(email=email)
+            Util.send_activation_link(user, request)
+            return Response({"error": "Expired activation link, a new link has been sent to your email account"}, status=status.HTTP_400_BAD_REQUEST)
 
         except jwt.exceptions.DecodeError as identifier:
             # send a new link
-             return Response({"error":"Invalid activation link"},status=status.HTTP_400_BAD_REQUEST)
-  
+            return Response({"error": "Invalid activation link"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LoginAPIView(generics.GenericAPIView):
     serializer_class = LoginSerializer
 
     def post(self, request):
+        if not request.data['email'] and not request.data['password']:
+            raise AuthenticationFailed('Provide Email and try again')
+
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -92,17 +96,16 @@ class LoginAPIView(generics.GenericAPIView):
 class ReVerifyEmail(generics.GenericAPIView):
     serializer_class = ReVerifyEmailSerializer
     renderer_classes = (UserRenderer,)
-    
-    def post (self, request):
+
+    def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        
+
         user = CustomUser.objects.get(email=serializer.data['email'])
 
         Util.send_activation_link(user, request)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-        
 
 class RequestPasswordResetEmail(generics.GenericAPIView):
     serializer_class = ResetPasswordEmailRequestSerializer
@@ -130,7 +133,6 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
             Util.send_email(data)
             return Response({'success': 'We have sent you a link to reset your password'}, status=status.HTTP_200_OK)
         return Response({'error': 'Email address not registered'}, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 class PasswordTokenCheckAPI(generics.GenericAPIView):
@@ -170,7 +172,7 @@ class SetNewPasswordAPIView(generics.GenericAPIView):
 
 
 class LoggedInUser(generics.RetrieveAPIView):
-    permission_classes = [IsAuthenticated,]
+    permission_classes = [IsAuthenticated, ]
     serializer_class = UserSerializer
 
     def get_object(self):
