@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework import permissions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
+from .pagination import JobPageNumberPagination
 
 from job_listing.models import Job, ApplyJob
 from .serializers import JobSerializer, ApplyJobSerializer, UserAppliedJobSerializer, GetUserApplicationsSerializer
@@ -49,6 +50,7 @@ def filter(request):
 
 class JobFilterView(generics.ListAPIView):
     serializer_class = JobSerializer
+    pagination_class = JobPageNumberPagination
 
     def get_queryset(self):
         qs = filter(self.request)
@@ -80,7 +82,10 @@ class UserAppliedJobView(views.APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class GetUserApplicationsView(generics.ListAPIView):
-    queryset = ApplyJob.objects.all().order_by('-published')[:4]
-    serializer_class = JobSerializer
-    GetUserApplicationsSerializer
+class GetUserApplicationsView(generics.ListCreateAPIView):
+    queryset = ApplyJob.objects.all().order_by('-application_created_at')[:4]
+    serializer_class = GetUserApplicationsSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self, *args, **kwargs):
+        return ApplyJob.objects.filter(applicant=self.request.user)

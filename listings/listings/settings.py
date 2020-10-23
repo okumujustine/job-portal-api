@@ -121,7 +121,7 @@ AUTH_USER_MODEL = 'authentication.CustomUser'
 
 # restframework settings
 REST_FRAMEWORK = {
-    'NON_FIELD_ERRORS_KEY':'error',
+    'NON_FIELD_ERRORS_KEY': 'error',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
@@ -131,7 +131,7 @@ REST_FRAMEWORK = {
 # email settings
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 25 #587
+EMAIL_PORT = 25  # 587
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
@@ -139,3 +139,6 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 # cors settings
 CORS_ALLOW_ALL_ORIGINS = True
 
+
+# frontend url
+FRONT_END_URL = 'http://localhost:3000/auth/email-verify'

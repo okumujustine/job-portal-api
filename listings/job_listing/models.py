@@ -18,24 +18,24 @@ class Job(models.Model):
 
     STATUS = (
         ('draft', 'Draft'),
-        ('published', 'Published'),
+        ('published', 'Published')
     )
 
     EXPERIENCE_STATUS = (
         ('month', 'Month'),
-        ('year', 'Year'),
+        ('year', 'Year')
     )
 
     GENDER = (
         ('Male', 'Male'),
         ('Female', 'Female'),
-        ('Any', 'Any'),
+        ('Any', 'Any')
     )
 
     JOB_TYPE = (
         ('Part Time', 'Part Time'),
         ('Full Time', 'Full Time'),
-        ('Freelance', 'Freelancer'),
+        ('Freelance', 'Freelancer')
     )
 
     category = models.ManyToManyField(Category)
@@ -97,7 +97,7 @@ class ApplyJob(models.Model):
         ('sent', 'Sent'),
         ('recieved', 'Recieved'),
         ('rejected', 'Rejected'),
-        ('approved', 'Approved'),
+        ('approved', 'Approved')
     )
     applicant = models.ForeignKey(
         to=CustomUser, on_delete=models.CASCADE, related_name='job_applicant')

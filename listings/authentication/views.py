@@ -63,6 +63,10 @@ class VerifyEmail(views.APIView):
         try:
             payload = jwt.decode(token, settings.SECRET_KEY)
             user = CustomUser.objects.get(id=payload['user_id'])
+
+            if not user:
+                return Response({"error": "User does not exists"}, status=status.HTTP_400_BAD_REQUEST)
+
             if not user.is_verified:
                 user.is_verified = True
                 user.save()
@@ -73,11 +77,17 @@ class VerifyEmail(views.APIView):
         except jwt.ExpiredSignature as identifier:
             # send a new link
             user = CustomUser.objects.get(email=email)
+
+            if not user:
+                return Response({"error": "User does not exists"}, status=status.HTTP_400_BAD_REQUEST)
+
             Util.send_activation_link(user, request)
-            return Response({"error": "Expired activation link, a new link has been sent to your email account"}, status=status.HTTP_400_BAD_REQUEST)
+            print('Expired activation link')
+            return Response({"error": "Expired activation link, a new link has been sent to your email account", "status": "newlink"}, status=status.HTTP_400_BAD_REQUEST)
 
         except jwt.exceptions.DecodeError as identifier:
             # send a new link
+            print('Invalid activation link')
             return Response({"error": "Invalid activation link"}, status=status.HTTP_400_BAD_REQUEST)
 
 
