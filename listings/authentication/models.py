@@ -10,7 +10,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 class CustomAccountManager(BaseUserManager):
     def create_user(self, email, first_name, last_name, password, **other_fields):
         if not email:
-            raise ValueError(_('You must provide an email address'))
+            return Response({"error": "You must provide an email address"}, status=status.HTTP_400_BAD_REQUEST)
 
         email = self.normalize_email(email)
         user = self.model(email=email, first_name=first_name,
@@ -26,10 +26,11 @@ class CustomAccountManager(BaseUserManager):
         other_fields.setdefault('role', 'admin')
 
         if other_fields.get('is_staff') is not True:
-            raise ValueError(_('is_staff must be true'))
+            # raise ValueError(_('is_staff must be true'))
+            return Response({"error": "is_staff must be true"}, status=status.HTTP_400_BAD_REQUEST)
 
         if other_fields.get('is_superuser') is not True:
-            raise ValueError(_('is_superuser must be true'))
+            return Response({"error": "is_superuser must be true"}, status=status.HTTP_400_BAD_REQUEST)
 
         return self.create_user(email, first_name, last_name, password, **other_fields)
 

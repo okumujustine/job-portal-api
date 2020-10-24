@@ -2,6 +2,8 @@ from rest_framework import serializers
 from .models import CustomUser
 from django.contrib import auth
 from rest_framework.exceptions import AuthenticationFailed
+from rest_framework import status
+from rest_framework.response import Response
 from django.utils.encoding import smart_str, force_str, smart_bytes, DjangoUnicodeDecodeError
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
@@ -85,7 +87,7 @@ class LoginSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         email = attrs.get('email', '')
         password = attrs.get('password', '')
-        print("email", email)
+
         user = auth.authenticate(email=email, password=password)
 
         if not user:

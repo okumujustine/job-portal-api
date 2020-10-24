@@ -35,6 +35,11 @@ class RegisterView(generics.GenericAPIView):
     def post(self, request):
         user = request.data
         serializer = self.serializer_class(data=user)
+
+        user_already_exists = CustomUser.objects.get(email=user['email'])
+        if user_already_exists:
+            return Response({"error": "User with provided email already exists"}, status=status.HTTP_400_BAD_REQUEST)
+
         serializer.is_valid(raise_exception=True)
         serializer.save()
         user_data = serializer.data
@@ -82,12 +87,10 @@ class VerifyEmail(views.APIView):
                 return Response({"error": "User does not exists"}, status=status.HTTP_400_BAD_REQUEST)
 
             Util.send_activation_link(user, request)
-            print('Expired activation link')
+
             return Response({"error": "Expired activation link, a new link has been sent to your email account", "status": "newlink"}, status=status.HTTP_400_BAD_REQUEST)
 
         except jwt.exceptions.DecodeError as identifier:
-            # send a new link
-            print('Invalid activation link')
             return Response({"error": "Invalid activation link"}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -95,8 +98,11 @@ class LoginAPIView(generics.GenericAPIView):
     serializer_class = LoginSerializer
 
     def post(self, request):
-        if not request.data['email'] and not request.data['password']:
-            raise AuthenticationFailed('Provide Email and try again')
+        if not request.data['email']:
+            return Response({"error": "Provide email or password and try again"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not request.data['password']:
+            return Response({"error": "Provide email or password and try again"}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)

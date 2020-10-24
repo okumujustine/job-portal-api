@@ -122,6 +122,7 @@ AUTH_USER_MODEL = 'authentication.CustomUser'
 # restframework settings
 REST_FRAMEWORK = {
     'NON_FIELD_ERRORS_KEY': 'error',
+    'EXCEPTION_HANDLER': 'common_utils.custom_execptionhandler.custom_exception_handler',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
