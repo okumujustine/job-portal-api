@@ -23,6 +23,18 @@ def custom_exception_handler(exc, context):
             }
             return response
 
+        # if exc.status_code == 400:
+        #     response.data = {
+        #         "error": "Bad request!"
+        #     }
+        #     return response
+
+        if exc.status_code == 500:
+            response.data = {
+                "error": "interna server error!"
+            }
+            return response
+
         if exc.status_code == 401:
             response.data = {
                 "error": "login please!"

@@ -1,11 +1,18 @@
 from rest_framework import serializers
-from job_listing.models import Job, ApplyJob
+from job_listing.models import Job, ApplyJob, Category
 
 
 class JobSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = "__all__"
         model = Job
+        fields = "__all__"
+        extra_kwargs = {'author': {'required': False}}
+
+
+class JobCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = "__all__"
+        model = Category
 
 
 class ApplyJobSerializer(serializers.ModelSerializer):

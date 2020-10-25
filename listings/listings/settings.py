@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = '1gn+6ofhp!ar4#6h1zw1-7micuc58sg+%6n8_9yiym9k9_)_$f'
 
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', None)
 
 ALLOWED_HOSTS = []
 
@@ -133,8 +133,8 @@ REST_FRAMEWORK = {
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 25  # 587
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 
 
 # cors settings
@@ -143,3 +143,6 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 # frontend url
 FRONT_END_URL = 'http://localhost:3000/auth/email-verify'
+
+
+# print(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, DEBUG)

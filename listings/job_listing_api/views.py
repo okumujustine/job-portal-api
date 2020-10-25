@@ -6,24 +6,31 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from .pagination import JobPageNumberPagination
 
-from job_listing.models import Job, ApplyJob
-from .serializers import JobSerializer, ApplyJobSerializer, UserAppliedJobSerializer, GetUserApplicationsSerializer
+from job_listing.models import Job, ApplyJob, Category
+from .serializers import (JobSerializer, ApplyJobSerializer, UserAppliedJobSerializer,
+                          GetUserApplicationsSerializer, JobCategorySerializer)
 
 
 # OPTION 1
 # TODO: change this -> only logged in users should add jobs
 class JobListView(generics.ListCreateAPIView):
-    queryset = Job.objects.all()
+    permission_classes = [IsAuthenticated, ]
+    parser_classes = (MultiPartParser, FormParser)
     serializer_class = JobSerializer
-    # permission_classes = (permissions.IsAuthenticated,)
 
     def perform_create(self, serializer):
+        print("current user current user current user current user", self.request.user)
         return serializer.save(author=self.request.user)
 
 
 class LatestJobsView(generics.ListAPIView):
     queryset = Job.objects.all().order_by('-published')[:4]
     serializer_class = JobSerializer
+
+
+class JobCategoriesView(generics.ListAPIView):
+    queryset = Category.objects.all()
+    serializer_class = JobCategorySerializer
 
 
 class JobDetailView(generics.RetrieveUpdateDestroyAPIView):

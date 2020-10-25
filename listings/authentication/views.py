@@ -26,7 +26,7 @@ from .renderers import UserRenderer
 
 class CustomRedirect(HttpResponsePermanentRedirect):
 
-    allowed_schemes = [os.environ.get('APP_SCHEME'), 'http', 'https']
+    allowed_schemes = [os.environ.get('APP_SCHEME', ''), 'http', 'https']
 
 
 class RegisterView(generics.GenericAPIView):
@@ -61,7 +61,8 @@ class VerifyEmail(views.APIView):
     token_param_config = openapi.Parameter(
         'token', in_=openapi.IN_QUERY, description='Description', type=openapi.TYPE_STRING)
 
-    @swagger_auto_schema(manual_parameters=[token_param_config, email_param_config])
+    # @swagger_auto_schema(manual_parameters=[token_param_config, email_param_config]) #swagger
+
     def get(self, request):
         token = request.GET.get('token')
         email = request.GET.get('email')
