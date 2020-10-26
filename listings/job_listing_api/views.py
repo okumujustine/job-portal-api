@@ -4,11 +4,12 @@ from rest_framework.response import Response
 from rest_framework import permissions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-from .pagination import JobPageNumberPagination
+from django.db.models import Count
 
+from .pagination import JobPageNumberPagination
 from job_listing.models import Job, ApplyJob, Category
 from .serializers import (JobSerializer, ApplyJobSerializer, UserAppliedJobSerializer,
-                          GetUserApplicationsSerializer, JobCategorySerializer)
+                          GetUserApplicationsSerializer, JobCategorySerializer, GetFilteredJobsSerializer)
 
 
 # OPTION 1
@@ -41,9 +42,11 @@ class JobDetailView(generics.RetrieveUpdateDestroyAPIView):
 def is_valid_queryparam(param):
     return param != '' and param is not None
 
+# job filter view starts from here
 
-def filter(request):
-    qs = Job.objects.all()
+
+def jobs_filter(request):
+    qs = Job.objects.all().annotate(application_count=Count('job_relatioship'))
     title_contains_query = request.GET.get('title')
     title_contains_type = request.GET.get('type')
 
@@ -56,11 +59,34 @@ def filter(request):
 
 
 class JobFilterView(generics.ListAPIView):
-    serializer_class = JobSerializer
+    serializer_class = GetFilteredJobsSerializer
     pagination_class = JobPageNumberPagination
 
     def get_queryset(self):
-        qs = filter(self.request)
+        qs = jobs_filter(self.request)
+        return qs
+
+
+# admin job requests view starts from here
+
+def admin_user_jobs_filter(request):
+    qs = Job.objects.filter(author=request.user).annotate(
+        application_count=Count('job_relatioship'))
+    title_contains_query = request.GET.get('title')
+
+    if is_valid_queryparam(title_contains_query):
+        qs = qs.filter(title__icontains=title_contains_query)
+
+    return qs
+
+
+class AdminUserJobView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated, ]
+    serializer_class = GetFilteredJobsSerializer
+    pagination_class = JobPageNumberPagination
+
+    def get_queryset(self):
+        qs = admin_user_jobs_filter(self.request)
         return qs
 
 

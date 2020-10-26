@@ -2,6 +2,42 @@ from rest_framework import serializers
 from job_listing.models import Job, ApplyJob, Category
 
 
+class GetFilteredJobsSerializer(serializers.ModelSerializer):
+
+    application_count = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Job
+        fields = [
+            "id",
+            "title",
+            "dateline",
+            "description",
+            "slug",
+            "published",
+            "status",
+            "gender",
+            "tag_one",
+            "tag_two",
+            "tag_three",
+            "tag_four",
+            "tag_five",
+            "company_logo",
+            "salary_range_from",
+            "salary_range_to",
+            "salary_currency",
+            "employment_status",
+            "company_name",
+            "company_location",
+            "experience",
+            "vacancies",
+            "experience_status",
+            "author",
+            "category",
+            "application_count"
+        ]
+
+
 class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job

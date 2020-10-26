@@ -114,4 +114,4 @@ class ApplyJob(models.Model):
     application_updated = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f'{self.first_name} {self.last_name} - {self.email}'
+        return f'{self.first_name} {self.last_name} - {self.email} applied for {self.job.title}'
