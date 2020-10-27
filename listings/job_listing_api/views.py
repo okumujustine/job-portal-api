@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from django.db.models import Count
 
-from .pagination import JobPageNumberPagination
+from .pagination import JobPageNumberPagination, JobApplicationsPageNumberPagination
 from job_listing.models import Job, ApplyJob, Category
 from .serializers import (JobSerializer, ApplyJobSerializer, UserAppliedJobSerializer,
                           GetUserApplicationsSerializer, JobCategorySerializer, GetFilteredJobsSerializer)
@@ -20,12 +20,12 @@ class JobListView(generics.ListCreateAPIView):
     serializer_class = JobSerializer
 
     def perform_create(self, serializer):
-        print("current user current user current user current user", self.request.user)
         return serializer.save(author=self.request.user)
 
 
 class LatestJobsView(generics.ListAPIView):
-    queryset = Job.objects.all().order_by('-published')[:4]
+    queryset = Job.objects.filter(
+        status='published').order_by('-published')[:4]
     serializer_class = JobSerializer
 
 
@@ -46,7 +46,8 @@ def is_valid_queryparam(param):
 
 
 def jobs_filter(request):
-    qs = Job.objects.all().annotate(application_count=Count('job_relatioship'))
+    qs = Job.objects.filter(status='published').annotate(
+        application_count=Count('job_relatioship'))
     title_contains_query = request.GET.get('title')
     title_contains_type = request.GET.get('type')
 
@@ -71,7 +72,7 @@ class JobFilterView(generics.ListAPIView):
 
 def admin_user_jobs_filter(request):
     qs = Job.objects.filter(author=request.user).annotate(
-        application_count=Count('job_relatioship'))
+        application_count=Count('job_relatioship')).order_by('-published')
     title_contains_query = request.GET.get('title')
 
     if is_valid_queryparam(title_contains_query):
@@ -83,11 +84,22 @@ def admin_user_jobs_filter(request):
 class AdminUserJobView(generics.ListAPIView):
     permission_classes = [IsAuthenticated, ]
     serializer_class = GetFilteredJobsSerializer
-    pagination_class = JobPageNumberPagination
+    pagination_class = JobApplicationsPageNumberPagination
 
     def get_queryset(self):
         qs = admin_user_jobs_filter(self.request)
         return qs
+
+
+class EmployerStatsView(views.APIView):
+    permission_classes = [IsAuthenticated, ]
+
+    def get(self, request, format=None):
+        posted_jobs_count = Job.objects.filter(
+            author=self.request.user).count()
+        job_applications_count = ApplyJob.objects.filter(
+            job__author=self.request.user).count()
+        return Response({'posted_jobs_count': posted_jobs_count, 'job_applications_count': job_applications_count})
 
 
 class ApplyJobView(generics.ListCreateAPIView):
@@ -122,3 +134,17 @@ class GetUserApplicationsView(generics.ListCreateAPIView):
 
     def get_queryset(self, *args, **kwargs):
         return ApplyJob.objects.filter(applicant=self.request.user)
+
+
+class GetJobApplicationsView(generics.ListAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = GetUserApplicationsSerializer
+
+    def get_queryset(self):
+        request_contains_id = self.request.GET.get('id')
+        if is_valid_queryparam(request_contains_id):
+            print(request_contains_id)
+
+        qs = queryset = ApplyJob.objects.filter(
+            job=request_contains_id).order_by('-application_created_at')
+        return qs

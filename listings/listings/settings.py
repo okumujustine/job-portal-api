@@ -46,7 +46,7 @@ ROOT_URLCONF = 'listings.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, "frontend/build")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -106,15 +106,6 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-STATIC_URL = '/static/'
-STATICROOT = os.path.join(BASE_DIR, "static")
-
-# media settings
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-MEDIA_URL = "/media/"
-
-
 # custom auth settings
 AUTH_USER_MODEL = 'authentication.CustomUser'
 
@@ -141,7 +132,20 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 CORS_ALLOW_ALL_ORIGINS = True
 
 
+# media settings
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = "/media/"
+
+
 # frontend url
+# Static files (CSS, JavaScript, Images)
+
+STATIC_URL = '/static/'
+STATICROOT = os.path.join(BASE_DIR, "frontend", "build", "static")
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "frontend/build/static")]
+
+
 FRONT_END_URL = 'http://localhost:3000/auth/email-verify'
 
 

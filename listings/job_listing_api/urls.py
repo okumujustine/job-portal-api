@@ -1,7 +1,7 @@
 
 from django.urls import path
-from .views import (JobListView, JobDetailView, JobFilterView, LatestJobsView,
-                    ApplyJobView, UserAppliedJobView, GetUserApplicationsView, JobCategoriesView, AdminUserJobView)
+from .views import (JobListView, JobDetailView, JobFilterView, LatestJobsView, ApplyJobView, UserAppliedJobView,
+                    GetUserApplicationsView, JobCategoriesView, AdminUserJobView, GetJobApplicationsView, EmployerStatsView)
 
 app_name = "job_listing_api"
 
@@ -15,6 +15,9 @@ urlpatterns = [
     path('apply/', ApplyJobView.as_view(), name="apply-jobs"),
     path('userapplied/', UserAppliedJobView.as_view(), name="user-applied"),
     path('admin/userjobs/', AdminUserJobView.as_view(), name="admin-user-jobs"),
+    path('employers/stats/', EmployerStatsView.as_view(), name="employers-stats"),
     path('userapplications/', GetUserApplicationsView.as_view(),
          name="get-user-applications"),
+    path('jobapplications/', GetJobApplicationsView.as_view(),
+         name="get-job-applications"),
 ]

@@ -47,7 +47,7 @@ class Job(models.Model):
     author = models.ForeignKey(
         to=CustomUser, on_delete=models.CASCADE, related_name='job_author')
     status = models.CharField(
-        max_length=10, choices=STATUS, default='published')
+        max_length=10, choices=STATUS, default='draft')
     gender = models.CharField(choices=GENDER, max_length=30, null=True)
     tag_one = models.CharField(max_length=100, null=True, blank=True)
     tag_two = models.CharField(max_length=100, null=True, blank=True)

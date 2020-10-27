@@ -20,3 +20,12 @@
 
 # run
 # CMD docker run -it -p 80:8888 listings
+
+
+# urlpatterns = [
+
+# path('', schema_view.with_ui('swagger', cache_timeout=0),
+#      name='schema-swagger-ui'),
+# path('redoc/', schema_view.with_ui('redoc',
+#                                    cache_timeout=0), name='schema-redoc'),
+# path("", TemplateView.as_view(template_name='index.html')),

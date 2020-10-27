@@ -64,6 +64,23 @@ class UserAppliedJobSerializer(serializers.Serializer):
 
 
 class GetUserApplicationsSerializer(serializers.ModelSerializer):
+    job = serializers.SerializerMethodField()
+
     class Meta():
         model = ApplyJob
-        fields = "__all__"
+        fields = [
+            'id',
+            'applicant',
+            'first_name',
+            'job',
+            'last_name',
+            'email',
+            'resume_file',
+            'resume_text',
+            'status',
+            'application_created_at',
+            'application_updated',
+        ]
+
+    def get_job(self, obj):
+        return obj.job.title
