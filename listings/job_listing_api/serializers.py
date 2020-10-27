@@ -64,7 +64,7 @@ class UserAppliedJobSerializer(serializers.Serializer):
 
 
 class GetUserApplicationsSerializer(serializers.ModelSerializer):
-    job = serializers.SerializerMethodField()
+    job = JobSerializer(read_only=True)
 
     class Meta():
         model = ApplyJob
@@ -82,5 +82,5 @@ class GetUserApplicationsSerializer(serializers.ModelSerializer):
             'application_updated',
         ]
 
-    def get_job(self, obj):
-        return obj.job.title
+    # def get_job(self, obj):
+    #     return obj.job.title
