@@ -78,6 +78,7 @@ class GetUserApplicationsSerializer(serializers.ModelSerializer):
             'email',
             'resume_file',
             'resume_text',
+            'profile_resume',
             'status',
             'application_created_at',
             'application_updated',
