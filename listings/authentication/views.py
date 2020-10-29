@@ -16,7 +16,8 @@ from django.shortcuts import redirect
 from django.http import HttpResponsePermanentRedirect
 import os
 
-from .serializers import RegisterSerializer, EmailVerificationSerializer, LoginSerializer, ReVerifyEmailSerializer, ResetPasswordEmailRequestSerializer, SetNewPasswordSerializer, UserSerializer
+from .serializers import (RegisterSerializer, EmailVerificationSerializer, LoginSerializer, ReVerifyEmailSerializer,
+                          ResetPasswordEmailRequestSerializer, SetNewPasswordSerializer, UserSerializer, LogoutSerializer)
 from .models import CustomUser, Profile
 from .utils import Util
 from .renderers import UserRenderer
@@ -196,3 +197,17 @@ class LoggedInUser(generics.RetrieveAPIView):
     def get_object(self):
         profile = Profile(owner=self.request.user)
         return self.request.user
+
+
+class LogoutAPIView(generics.GenericAPIView):
+    serializer_class = LogoutSerializer
+
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)

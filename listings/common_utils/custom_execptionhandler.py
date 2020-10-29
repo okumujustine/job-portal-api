@@ -35,6 +35,12 @@ def custom_exception_handler(exc, context):
             }
             return response
 
+        if exc.status_code == 403:
+            response.data = {
+                "error": "forbidden, login please!"
+            }
+            return response
+
         if exc.status_code == 401:
             response.data = {
                 "error": "login please!"
