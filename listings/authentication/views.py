@@ -17,7 +17,7 @@ from django.http import HttpResponsePermanentRedirect
 import os
 
 from .serializers import RegisterSerializer, EmailVerificationSerializer, LoginSerializer, ReVerifyEmailSerializer, ResetPasswordEmailRequestSerializer, SetNewPasswordSerializer, UserSerializer
-from .models import CustomUser
+from .models import CustomUser, Profile
 from .utils import Util
 from .renderers import UserRenderer
 
@@ -36,8 +36,9 @@ class RegisterView(generics.GenericAPIView):
         user = request.data
         serializer = self.serializer_class(data=user)
 
-        user_already_exists = CustomUser.objects.get(email=user['email'])
-        if user_already_exists:
+        user_already_exists = CustomUser.objects.filter(email=user['email'])
+
+        if user_already_exists.exists():
             return Response({"error": "User with provided email already exists"}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer.is_valid(raise_exception=True)
@@ -193,4 +194,5 @@ class LoggedInUser(generics.RetrieveAPIView):
     serializer_class = UserSerializer
 
     def get_object(self):
+        profile = Profile(owner=self.request.user)
         return self.request.user

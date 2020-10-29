@@ -34,7 +34,8 @@ class GetFilteredJobsSerializer(serializers.ModelSerializer):
             "experience_status",
             "author",
             "category",
-            "application_count"
+            "application_count",
+            "work_duration"
         ]
 
 
@@ -55,7 +56,7 @@ class ApplyJobSerializer(serializers.ModelSerializer):
     class Meta():
         model = ApplyJob
         fields = ('resume_file', 'first_name',
-                  'last_name', 'email', 'job')
+                  'last_name', 'email', 'job', 'profile_resume')
 
 
 class UserAppliedJobSerializer(serializers.Serializer):
@@ -81,6 +82,3 @@ class GetUserApplicationsSerializer(serializers.ModelSerializer):
             'application_created_at',
             'application_updated',
         ]
-
-    # def get_job(self, obj):
-    #     return obj.job.title

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser
+from .models import CustomUser, Profile
 from django.contrib import auth
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework import status
@@ -9,10 +9,19 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
 
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = "__all__"
+
+
 class UserSerializer(serializers.ModelSerializer):
+    profile_owner = UserProfileSerializer(read_only=True, many=True)
+
     class Meta:
         model = CustomUser
-        fields = ('id', 'first_name', 'last_name', 'phone', 'email', 'role')
+        fields = ('id', 'first_name', 'last_name', 'phone',
+                  'email', 'role', 'profile_owner')
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -71,6 +80,8 @@ class LoginSerializer(serializers.ModelSerializer):
 
     tokens = serializers.SerializerMethodField()
 
+    profile_owner = UserProfileSerializer(many=True, read_only=True)
+
     def get_tokens(self, obj):
         user = CustomUser.objects.get(email=obj['email'])
 
@@ -81,8 +92,8 @@ class LoginSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['email', 'first_name', 'last_name',
-                  'phone', 'role', 'password', 'tokens']
+        fields = ['id', 'email', 'first_name', 'last_name',
+                  'phone', 'role', 'password', 'tokens', 'profile_owner']
 
     def validate(self, attrs):
         email = attrs.get('email', '')
@@ -97,12 +108,14 @@ class LoginSerializer(serializers.ModelSerializer):
         if not user.is_verified:
             raise AuthenticationFailed('Email is not verified')
         return {
+            'id': user.id,
             'email': user.email,
             'first_name': user.first_name,
             'last_name': user.last_name,
             'phone': user.phone,
             'role': user.role,
-            'tokens': user.tokens
+            'tokens': user.tokens,
+            'profile_owner': user.profile_owner
         }
 
         return super().validate(attrs)

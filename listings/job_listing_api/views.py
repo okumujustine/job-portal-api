@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from django.db.models import Count
 
-from .pagination import JobPageNumberPagination, JobApplicationsPageNumberPagination
+from .pagination import JobPageNumberPagination, JobApplicationsPageNumberPagination, EmployeeJobApplicationsPageNumberPagination
 from job_listing.models import Job, ApplyJob, Category
 from .serializers import (JobSerializer, ApplyJobSerializer, UserAppliedJobSerializer,
                           GetUserApplicationsSerializer, JobCategorySerializer, GetFilteredJobsSerializer)
@@ -18,6 +18,7 @@ class JobListView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated, ]
     parser_classes = (MultiPartParser, FormParser)
     serializer_class = JobSerializer
+    queryset = Job.objects.all()
 
     def perform_create(self, serializer):
         return serializer.save(author=self.request.user)
@@ -106,12 +107,13 @@ class ApplyJobView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated, ]
     parser_classes = (MultiPartParser, FormParser)
     serializer_class = ApplyJobSerializer
+    queryset = ApplyJob.objects.all()
 
     def perform_create(self, serializer):
         return serializer.save(applicant=self.request.user)
 
 
-class UserAppliedJobView(views.APIView):
+class EmployeeAppliedJobView(views.APIView):
     serializer_class = UserAppliedJobSerializer
 
     def post(self, request, format=None):
@@ -124,16 +126,17 @@ class UserAppliedJobView(views.APIView):
             user_email = [user.email for user in userJob]
             return Response(user_email, status=status.HTTP_200_OK)
         else:
+            print(serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class GetUserApplicationsView(generics.ListCreateAPIView):
-    queryset = ApplyJob.objects.all().order_by('-application_created_at')[:4]
+class GetEmployeeApplicationsView(generics.ListCreateAPIView):
+    pagination_class = EmployeeJobApplicationsPageNumberPagination
     serializer_class = GetUserApplicationsSerializer
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self, *args, **kwargs):
-        return ApplyJob.objects.filter(applicant=self.request.user)
+        return ApplyJob.objects.filter(applicant=self.request.user).order_by('-application_created_at')
 
 
 class GetJobApplicationsView(generics.ListAPIView):

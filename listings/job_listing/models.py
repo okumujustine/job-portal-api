@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from authentication.models import CustomUser
+from authentication.models import CustomUser, Profile
 from django.utils import timezone
 from django.db.models.signals import pre_save
 
@@ -35,7 +35,9 @@ class Job(models.Model):
     JOB_TYPE = (
         ('Part Time', 'Part Time'),
         ('Full Time', 'Full Time'),
-        ('Freelance', 'Freelancer')
+        ('Freelance', 'Freelancer'),
+        ('Internship', 'Internship'),
+        ('Contract', 'Contract')
     )
 
     category = models.ManyToManyField(Category)
@@ -55,6 +57,8 @@ class Job(models.Model):
     tag_four = models.CharField(max_length=100, null=True, blank=True)
     tag_five = models.CharField(max_length=100, null=True, blank=True)
     company_logo = models.ImageField(blank=True, upload_to='media', null=True)
+    profile_company_logo = models.CharField(
+        max_length=100, null=True, blank=True)
     salary_range_from = models.CharField(max_length=100)
     salary_range_to = models.CharField(max_length=100, null=True, blank=True)
     salary_currency = models.CharField(max_length=100)
@@ -63,6 +67,7 @@ class Job(models.Model):
     company_location = models.CharField(max_length=255, default="anonymous")
     experience = models.CharField(max_length=100)
     vacancies = models.CharField(max_length=100)
+    work_duration = models.CharField(max_length=100, null=True, blank=True)
     experience_status = models.CharField(
         choices=EXPERIENCE_STATUS, max_length=100)
 
@@ -106,8 +111,13 @@ class ApplyJob(models.Model):
         to=Job, on_delete=models.CASCADE, related_name='job_relatioship')
     last_name = models.CharField(max_length=50)
     email = models.EmailField()
-    resume_file = models.FileField(null=True)
-    resume_text = models.TextField(null=True)
+    resume_file = models.FileField(null=True, blank=True)
+    resume_text = models.TextField(null=True, blank=True)
+    profile_text_resume = models.CharField(
+        max_length=50, null=True, blank=True)
+    profile_resume = models.CharField(max_length=255, null=True, blank=True)
+    # employee_profile_resume = models.ForeignKey(
+    #     to=Profile, on_delete=models.CASCADE, related_name='profile_applicant')
     status = models.CharField(
         max_length=10, choices=APPLICANT_STATUS, default='sent')
     application_created_at = models.DateTimeField(default=timezone.now)
