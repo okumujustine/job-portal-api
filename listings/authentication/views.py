@@ -3,6 +3,7 @@ from rest_framework import generics, status, views
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.parsers import MultiPartParser, FormParser
 from django.conf import settings
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -17,7 +18,7 @@ from django.http import HttpResponsePermanentRedirect
 import os
 
 from .serializers import (RegisterSerializer, EmailVerificationSerializer, LoginSerializer, ReVerifyEmailSerializer,
-                          ResetPasswordEmailRequestSerializer, SetNewPasswordSerializer, UserSerializer, LogoutSerializer)
+                          ResetPasswordEmailRequestSerializer, SetNewPasswordSerializer, UserSerializer, LogoutSerializer, UserProfileSerializer, UserProfileUpdateSerializer)
 from .models import CustomUser, Profile
 from .utils import Util
 from .renderers import UserRenderer
@@ -211,3 +212,19 @@ class LogoutAPIView(generics.GenericAPIView):
         serializer.save()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class UserProfileView(generics.UpdateAPIView):
+    serializer_class = UserProfileUpdateSerializer
+    parser_classes = (MultiPartParser, FormParser)
+    permission_classes = (IsAuthenticated,)
+
+    # def perform_update(self, serializer)
+
+
+class UserProfileUpdateView(generics.UpdateAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = UserProfileUpdateSerializer
+    parser_classes = (MultiPartParser, FormParser)
+    lookup_field = "owner"
+    permission_classes = (IsAuthenticated,)

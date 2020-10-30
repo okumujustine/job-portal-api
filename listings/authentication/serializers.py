@@ -181,3 +181,14 @@ class LogoutSerializer(serializers.Serializer):
 
         except TokenError:
             self.fail('bad_token')
+
+
+class UserProfileUpdateSerializer(serializers.ModelSerializer):
+    # resume = serializers.FileField('resume', required=False)
+    # user_company_logo = serializers.FileField(
+    #     'user_company_logo', required=False)
+    # text_resume = serializers.CharField(max_length=255, required=False)
+
+    class Meta:
+        model = Profile
+        fields = ['id', 'owner', 'resume', 'user_company_logo', 'text_resume']
