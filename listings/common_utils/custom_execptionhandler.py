@@ -13,9 +13,6 @@ def custom_exception_handler(exc, context):
     response = exception_handler(exc, context)
 
     if response is not None:
-        # import pdb
-        # pdb.set_trace()
-
         if "LoginAPIView" in str(context['view']) and exc.status_code == 401:
             response.status_code = 400
             response.data = {
@@ -23,25 +20,22 @@ def custom_exception_handler(exc, context):
             }
             return response
 
-        # if exc.status_code == 400:
-        #     response.data = {
-        #         "error": "Bad request!"
-        #     }
-        #     return response
-
         if exc.status_code == 500:
+            response.status_code = 500
             response.data = {
-                "error": "interna server error!"
+                "error": "internal server error!"
             }
             return response
 
         if exc.status_code == 403:
+            response.status_code = 403
             response.data = {
                 "error": "forbidden, login please!"
             }
             return response
 
         if exc.status_code == 401:
+            response.status_code = 401
             response.data = {
                 "error": "login please!"
             }

@@ -126,7 +126,6 @@ class EmployeeAppliedJobView(views.APIView):
             user_email = [user.email for user in userJob]
             return Response(user_email, status=status.HTTP_200_OK)
         else:
-            print(serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
