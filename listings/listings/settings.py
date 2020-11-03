@@ -10,9 +10,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = '1gn+6ofhp!ar4#6h1zw1-7micuc58sg+%6n8_9yiym9k9_)_$f'
 
 # DEBUG = os.environ.get('DEBUG', None)
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
