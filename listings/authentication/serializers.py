@@ -85,7 +85,6 @@ class LoginSerializer(serializers.ModelSerializer):
 
     def get_tokens(self, obj):
         user = CustomUser.objects.get(email=obj['email'])
-        print("sdfghjklfghbjnk", user)
 
         return {
             'refresh': user.tokens()['refresh'],

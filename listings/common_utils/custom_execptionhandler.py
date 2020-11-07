@@ -13,6 +13,7 @@ def custom_exception_handler(exc, context):
     response = exception_handler(exc, context)
 
     if response is not None:
+        # prin(exc)
         if "LoginAPIView" in str(context['view']) and exc.status_code == 401:
             response.status_code = 400
             response.data = {
@@ -24,6 +25,13 @@ def custom_exception_handler(exc, context):
             response.status_code = 500
             response.data = {
                 "error": "internal server error!"
+            }
+            return response
+
+        if exc.status_code == 530:
+            response.status_code = 530
+            response.data = {
+                "error": "failed to send verification email, try again later!"
             }
             return response
 
