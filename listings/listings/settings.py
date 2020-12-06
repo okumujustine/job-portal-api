@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     'drf_yasg',
+    'cloudinary_storage',
     'authentication',
     'job_listing',
     'job_listing_api'
@@ -138,13 +139,19 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 CORS_ALLOW_ALL_ORIGINS = True
 
 
-# media settings
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+# local media settings
+# MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
 
+# cloudinary media settings
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME':  os.environ.get('CLOUDINARY_CLOUD_NAME', ''),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', ''),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', '')
+}
 
 # frontend url # Static files (CSS, JavaScript, Images)
-
 STATIC_URL = '/static/'
 STATICROOT = os.path.join(BASE_DIR, "frontend", "build", "static")
 
