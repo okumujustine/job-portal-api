@@ -21,7 +21,7 @@ class JobListView(generics.ListCreateAPIView):
     queryset = Job.objects.all()
 
     def perform_create(self, serializer):
-        return serializer.save(author=self.request.user)
+        return serializer.save(author=self.request.user, status='published')
 
 
 class LatestJobsView(generics.ListAPIView):
