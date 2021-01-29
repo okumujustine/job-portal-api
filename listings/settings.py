@@ -3,7 +3,9 @@
 from pathlib import Path
 import os
 from datetime import timedelta
-# import django_heroku
+import django_heroku
+# import dj_database_url
+# DATABASES = {default': dj_database_url.config()}
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -172,4 +174,4 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
-# django_heroku.settings(locals())
+django_heroku.settings(locals())
