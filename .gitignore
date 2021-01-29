@@ -116,5 +116,5 @@ media/
 # !**/migrations/__init__.py
 @bouwehand
 
-assets/
-static/
+# assets/
+# static/
