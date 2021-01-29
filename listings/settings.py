@@ -3,7 +3,7 @@
 from pathlib import Path
 import os
 from datetime import timedelta
-import django_heroku
+# import django_heroku
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -157,10 +157,10 @@ CLOUDINARY_STORAGE = {
 }
 
 # frontend url # Static files (CSS, JavaScript, Images)
-# STATIC_URL = '/static/'
-# STATICROOT = os.path.join(BASE_DIR, "frontend", "build", "static")
+STATIC_URL = '/static/'
+STATICROOT = os.path.join(BASE_DIR, "static")
 
-# STATICFILES_DIRS = [os.path.join(BASE_DIR, "frontend/build/static")]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 
 FRONT_END_URL = 'http://localhost:3000/auth/email-verify'
@@ -172,4 +172,4 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
-django_heroku.settings(locals())
+# django_heroku.settings(locals())
