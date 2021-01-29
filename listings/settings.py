@@ -164,8 +164,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "assets")]
 
-
-FRONT_END_URL = 'http://localhost:3000/auth/email-verify'
+FRONT_END_URL = os.environ.get('FRONT_END_URL', None) + '/auth/email-verify'
 
 
 # JWT settings
