@@ -158,9 +158,9 @@ CLOUDINARY_STORAGE = {
 
 # frontend url # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-STATICROOT = os.path.join(BASE_DIR, "static")
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "assets")]
 
 
 FRONT_END_URL = 'http://localhost:3000/auth/email-verify'
