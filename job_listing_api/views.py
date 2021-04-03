@@ -18,7 +18,7 @@ class JobListView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated, ]
     parser_classes = (MultiPartParser, FormParser)
     serializer_class = JobSerializer
-    queryset = Job.objects.all()
+    queryset = Job.objects.filter(status='published').order_by('-published')
 
     def perform_create(self, serializer):
         return serializer.save(author=self.request.user, status='published')
@@ -65,7 +65,7 @@ class JobFilterView(generics.ListAPIView):
     pagination_class = JobPageNumberPagination
 
     def get_queryset(self):
-        qs = jobs_filter(self.request)
+        qs = jobs_filter(self.request).order_by('-published')
         return qs
 
 
