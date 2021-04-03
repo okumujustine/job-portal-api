@@ -18,7 +18,7 @@ class JobListView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated, ]
     parser_classes = (MultiPartParser, FormParser)
     serializer_class = JobSerializer
-    queryset = Job.objects.all()
+    queryset = Job.objects.all().order_by('-published')
 
     def perform_create(self, serializer):
         return serializer.save(author=self.request.user)
