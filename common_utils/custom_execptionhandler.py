@@ -1,19 +1,38 @@
 from rest_framework.views import exception_handler
 
 
+def error_template(key, error):
+    return {
+        key: error
+    }
+
+
 def custom_exception_handler(exc, context):
     handlers = {
         "ValidationError": _handle_generic_error,
         "Http404": _handle_generic_error,
         "PermissionDenied": _handle_generic_error,
         "NotAuthenticated": _handle_authentication_error,
-        # "AuthenticationFailed": _handle_generic_error
     }
 
     response = exception_handler(exc, context)
 
     if response is not None:
-        # prin(exc)
+        if "SetNewPasswordAPIView" in str(context['view']):
+
+            if response.data.get("password", None):
+                response.data = error_template("password",
+                                               response.data.get("password")[0])
+
+            if response.data.get("token", None):
+                response.data = error_template("token",
+                                               response.data.get("token")[0])
+
+            if response.data.get("uidb64", None):
+                response.data = error_template("uidb64",
+                                               response.data.get("uidb64")[0])
+            return response
+
         if "LoginAPIView" in str(context['view']) and exc.status_code == 401:
             response.status_code = 400
             response.data = {
