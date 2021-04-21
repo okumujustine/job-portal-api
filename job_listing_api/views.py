@@ -72,17 +72,19 @@ class JobFilterView(generics.ListAPIView):
 # admin job requests view starts from here
 
 def admin_user_jobs_filter(request):
+    qsr = Job.objects.filter(author=request.user)
     qs = Job.objects.filter(author=request.user).annotate(
         application_count=Count('job_relatioship')).order_by('-published')
+
     title_contains_query = request.GET.get('title')
 
-    if is_valid_queryparam(title_contains_query):
+    if is_valid_queryparam(title_contains_query) and title_contains_query:
         qs = qs.filter(title__icontains=title_contains_query)
 
     return qs
 
 
-class AdminUserJobView(generics.ListAPIView):
+class AdminUserJobListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated, ]
     serializer_class = GetFilteredJobsSerializer
     pagination_class = JobApplicationsPageNumberPagination
