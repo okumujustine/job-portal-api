@@ -45,7 +45,12 @@ class RegisterSerializer(serializers.ModelSerializer):
         role = attrs.get('role', '')
 
         if not first_name.isalnum():
-            raise serializers.ValidationError('Invalid user name format')
+            raise serializers.ValidationError(
+                'Invalid first name format (remove spaces if any)')
+
+        if not last_name.isalnum():
+            raise serializers.ValidationError(
+                'Invalid last name format (remove spaces if any)')
 
         return attrs
 
