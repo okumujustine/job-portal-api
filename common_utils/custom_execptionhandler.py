@@ -18,6 +18,9 @@ def custom_exception_handler(exc, context):
     response = exception_handler(exc, context)
 
     if response is not None:
+        if "RegisterView" in str(context['view']):
+            return response
+
         if "SetNewPasswordAPIView" in str(context['view']):
 
             if response.data.get("password", None):
