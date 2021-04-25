@@ -10,6 +10,7 @@ from django.db.models.signals import post_save
 
 class CustomAccountManager(BaseUserManager):
     def create_user(self, email, first_name, last_name, password, **other_fields):
+        other_fields.setdefault('is_verified', True)
         if not email:
             return Response({"error": "You must provide an email address"}, status=status.HTTP_400_BAD_REQUEST)
 
