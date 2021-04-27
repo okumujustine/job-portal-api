@@ -5,16 +5,17 @@ from django.utils import timezone
 from django.db.models.signals import pre_save
 
 from listings.utils import unique_slug_generator
+from authentication.models import MainModel
 
 
-class Category(models.Model):
+class Category(MainModel, models.Model):
     name = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
 
 
-class Job(models.Model):
+class Job(MainModel, models.Model):
 
     STATUS = (
         ('draft', 'Draft'),
@@ -86,9 +87,7 @@ def slug_generator(sender, instance, *args, **kwargs):
 pre_save.connect(slug_generator, sender=Job)
 
 
-class Contact(models.Model):
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
+class Contact(MainModel, models.Model):
     email = models.EmailField()
     subject = models.CharField(max_length=100)
     message = models.TextField()
@@ -97,7 +96,7 @@ class Contact(models.Model):
         return self.email
 
 
-class ApplyJob(models.Model):
+class ApplyJob(MainModel, models.Model):
     APPLICANT_STATUS = (
         ('sent', 'Sent'),
         ('recieved', 'Recieved'),

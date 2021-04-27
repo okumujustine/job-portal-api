@@ -8,6 +8,15 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.db.models.signals import post_save
 
 
+class MainModel(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+        ordering = ('-created_at',)
+
+
 class CustomAccountManager(BaseUserManager):
     def create_user(self, email, first_name, last_name, password, **other_fields):
         other_fields.setdefault('is_verified', True)
@@ -44,7 +53,7 @@ USER_TYPE_CHOICES = (
 )
 
 
-class CustomUser(AbstractBaseUser, PermissionsMixin):
+class CustomUser(MainModel, AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('email address'), unique=True)
     first_name = models.CharField(max_length=150)
     last_name = models.CharField(max_length=150)
@@ -81,7 +90,7 @@ def build_profile_on_user_creation(sender, instance, created, **kwargs):
 post_save.connect(build_profile_on_user_creation, sender=CustomUser)
 
 
-class Profile(models.Model):
+class Profile(MainModel, models.Model):
     owner = models.ForeignKey(
         to=CustomUser, on_delete=models.CASCADE, related_name='profile_owner')
     resume = models.FileField(null=True, blank=True)
