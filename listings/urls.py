@@ -12,6 +12,7 @@ urlpatterns = [
     path("auth/", include("authentication.urls")),
 
     path('joblisting/', include('job_listing_api.urls', namespace='job_listing_api')),
+    path("contactus/", include('contactus.urls')),
 ]
 
 if settings.DEBUG:

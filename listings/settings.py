@@ -33,7 +33,10 @@ INSTALLED_APPS = [
     'cloudinary_storage',
     'authentication',
     'job_listing',
-    'job_listing_api'
+    'job_listing_api',
+    'blog',
+    'contactus',
+    'django_quill',
 ]
 
 MIDDLEWARE = [

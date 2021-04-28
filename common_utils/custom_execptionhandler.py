@@ -18,6 +18,14 @@ def custom_exception_handler(exc, context):
     response = exception_handler(exc, context)
 
     if response is not None:
+        if "ContactUsCreateView" in str(context['view']):
+            if response.data.get("email", None):
+                response.data = {
+                    "error": response.data.get("email")
+                }
+
+            return response
+
         if "RegisterView" in str(context['view']):
             if response.data.get("email", None):
                 response.data = {
