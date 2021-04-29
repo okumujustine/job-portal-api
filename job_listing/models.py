@@ -87,15 +87,6 @@ def slug_generator(sender, instance, *args, **kwargs):
 pre_save.connect(slug_generator, sender=Job)
 
 
-class Contact(MainModel, models.Model):
-    email = models.EmailField()
-    subject = models.CharField(max_length=100)
-    message = models.TextField()
-
-    def __str__(self):
-        return self.email
-
-
 class ApplyJob(MainModel, models.Model):
     APPLICANT_STATUS = (
         ('sent', 'Sent'),
