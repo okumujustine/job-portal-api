@@ -12,7 +12,6 @@ django-cors-headers==3.5.0
 django-heroku==0.3.1
 django-on-heroku==1.1.2
 django-shortcuts==1.6
-django-quill-editor==0.1.22
 djangorestframework==3.11.1
 djangorestframework-simplejwt==4.4.0
 docker==4.3.1
