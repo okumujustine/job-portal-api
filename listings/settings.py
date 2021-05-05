@@ -131,12 +131,10 @@ REST_FRAMEWORK = {
 }
 
 
-# email settings
-EMAIL_USE_TLS = True
-EMAIL_HOST = os.environ.get('DEV_EMAIL_HOST', None)
-EMAIL_PORT = os.environ.get('DEV_EMAIL_PORT', None)
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', None)
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', None)
+# email jet settings
+
+MAILJET_API_KEY = os.environ.get('MAILJET_API_KEY', None)
+MAILJET_API_SECRET = os.environ.get('MAILJET_API_SECRET', None)
 
 
 # cors settings

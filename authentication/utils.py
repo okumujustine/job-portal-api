@@ -7,6 +7,8 @@ from rest_framework import status
 from django.urls import reverse
 from django.conf import settings
 
+from mailjet_rest import Client
+
 
 class Util:
     @staticmethod
@@ -14,18 +16,31 @@ class Util:
         email = EmailMessage(
             subject=data['email_subject'], body=data['email_body'], to=[data['to_email']])
         email.send()
-        # return Response({"error": "Failed to send verification email, try again later"}, status=status.HTTP_400_BAD_REQUEST)
 
     def send_activation_link(user, request):
         token = RefreshToken.for_user(user).access_token
-        current_site = get_current_site(request).domain
-        relativeLink = reverse('email-verify')
-        # absurl = 'http://'+current_site+relativeLink+"?email="+user.email+"&token="+str(token)
+
         absurl = settings.FRONT_END_URL+"/"+user.email+"/"+str(token)
 
-        email_body = 'Hi ' + user.first_name + \
-            ' Use the link below to verify your email \n' + absurl
-        data = {'email_body': email_body, 'to_email': user.email,
-                'email_subject': 'Verify your email'}
-
-        Util.send_email(data)
+        mailjet = Client(auth=(settings.MAILJET_API_KEY,
+                         settings.MAILJET_API_SECRET), version='v3.1')
+        data = {
+            'Messages': [
+                {
+                    "From": {
+                        "Email": "okumujustine01@gmail.com",
+                        "Name": "justine@JobsUg"
+                    },
+                    "To": [
+                        {
+                            "Email": user.email,
+                            "Name": user.first_name
+                        }
+                    ],
+                    "Subject": "JobsUg Registration!",
+                    "TextPart": "Welcome to JobsUg!",
+                    "HTMLPart": "<div><h3>Dear " + user.first_name + "</h3> <br/> click here to verify your email address.<h1><a href="+absurl+">Click Here</a></h1> <br/> Or you can follow the link below.<br/> "+absurl+" < /div >"
+                }
+            ]
+        }
+        mailjet.send.create(data=data)
