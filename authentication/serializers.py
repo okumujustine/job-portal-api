@@ -43,7 +43,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         last_name = attrs.get('last_name', '')
         phone = attrs.get('phone', '')
         role = attrs.get('role', '')
-        is_verified = True
 
         if not first_name.isalnum():
             raise serializers.ValidationError(
