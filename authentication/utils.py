@@ -17,13 +17,14 @@ class Util:
             subject=data['email_subject'], body=data['email_body'], to=[data['to_email']])
         email.send()
 
-    def send_activation_link(user, request):
+    def send_activation_link(user):
         token = RefreshToken.for_user(user).access_token
 
-        absurl = settings.FRONT_END_URL+"/"+user.email+"/"+str(token)
+        absurl = settings.FRONT_END_URL + \
+            "/auth/email-verify/"+user.email+"/"+str(token)
 
         mailjet = Client(auth=(settings.MAILJET_API_KEY,
-                         settings.MAILJET_API_SECRET), version='v3.1')
+                               settings.MAILJET_API_SECRET), version='v3.1')
         data = {
             'Messages': [
                 {
@@ -39,7 +40,32 @@ class Util:
                     ],
                     "Subject": "JobsUg Registration!",
                     "TextPart": "Welcome to JobsUg!",
-                    "HTMLPart": "<div><h3>Dear " + user.first_name + "</h3> <br/> click here to verify your email address.<h1><a href="+absurl+">Click Here</a></h1> <br/> Or you can follow the link below.<br/> "+absurl+" < /div >"
+                    "HTMLPart": "<div><h3>Dear " + user.first_name + "</h3> <br/> click here to verify your email address.<h1><a href="+absurl+">Click Here</a></h1> <br/> Or you can follow the link below.<br/> "+absurl+"</div>"
+                }
+            ]
+        }
+        mailjet.send.create(data=data)
+
+    def send_reset_password_link(user, password_reset_url):
+
+        mailjet = Client(auth=(settings.MAILJET_API_KEY,
+                               settings.MAILJET_API_SECRET), version='v3.1')
+        data = {
+            'Messages': [
+                {
+                    "From": {
+                        "Email": "okumujustine01@gmail.com",
+                        "Name": "justine@JobsUg"
+                    },
+                    "To": [
+                        {
+                            "Email": user.email,
+                            "Name": user.first_name
+                        }
+                    ],
+                    "Subject": "JobsUg Password Reset!",
+                    "TextPart": "Thanks for using JobsUg!",
+                    "HTMLPart": "<div><h3>Dear " + user.first_name + "</h3> <br/> click here to reset your password.<h1><a href="+password_reset_url+">Click Here</a></h1> <br/> Or you can follow the link below.<br/> "+password_reset_url+" < /div >"
                 }
             ]
         }
