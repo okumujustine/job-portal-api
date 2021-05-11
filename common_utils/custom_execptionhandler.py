@@ -79,6 +79,12 @@ def custom_exception_handler(exc, context):
 
         if exc.status_code == 401:
             response.status_code = 401
+            if(response.data['detail']):
+                response.data = {
+                    "error": response.data['detail']
+                }
+                return response
+
             response.data = {
                 "error": "login please!"
             }
