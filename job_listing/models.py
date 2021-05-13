@@ -69,6 +69,7 @@ class Job(MainModel, models.Model):
     experience = models.CharField(max_length=100)
     vacancies = models.CharField(max_length=100)
     work_duration = models.CharField(max_length=100, null=True, blank=True)
+    application_link = models.URLField(max_length=200, null=True, blank=True)
     experience_status = models.CharField(
         choices=EXPERIENCE_STATUS, max_length=100)
 

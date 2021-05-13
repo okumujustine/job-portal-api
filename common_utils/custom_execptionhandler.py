@@ -7,6 +7,12 @@ def error_template(key, error):
     }
 
 
+def error_template_to_error_key(error):
+    return {
+        "error": error
+    }
+
+
 def custom_exception_handler(exc, context):
     handlers = {
         "ValidationError": _handle_generic_error,
@@ -33,6 +39,12 @@ def custom_exception_handler(exc, context):
                 }
 
             return response
+
+        if "JobListView" in str(context['view']):
+            if response.data.get("application_link", None):
+                response.data = error_template_to_error_key(
+                    response.data.get("application_link")[0])
+                return response
 
         if "SetNewPasswordAPIView" in str(context['view']):
 

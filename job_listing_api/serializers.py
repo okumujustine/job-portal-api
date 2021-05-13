@@ -35,7 +35,8 @@ class GetFilteredJobsSerializer(serializers.ModelSerializer):
             "author",
             "category",
             "application_count",
-            "work_duration"
+            "work_duration",
+            'application_link'
         ]
 
 
