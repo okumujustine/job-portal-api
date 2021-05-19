@@ -127,7 +127,8 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'common_utils.custom_execptionhandler.custom_exception_handler',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
 }
 
 
