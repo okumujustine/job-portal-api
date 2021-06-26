@@ -47,7 +47,7 @@ class RegisterView(generics.GenericAPIView):
 
         user = CustomUser.objects.get(email=user_data['email'])
 
-        Util.send_activation_link(user, request)
+        Util.send_activation_link(user)
         # // send activation link disabled
 
         return Response(user_data, status=status.HTTP_201_CREATED)
