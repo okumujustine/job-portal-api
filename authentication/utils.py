@@ -17,11 +17,13 @@ class Util:
             subject=data['email_subject'], body=data['email_body'], to=[data['to_email']])
         email.send()
 
-    def send_activation_link(user):
-        token = RefreshToken.for_user(user).access_token
+    def send_activation_link(self):
+        token = RefreshToken.for_user(self).access_token
 
-        absurl = settings.FRONT_END_URL + \
-            "/auth/email-verify/"+user.email+"/"+str(token)
+        absurl = (
+            (settings.FRONT_END_URL + "/auth/email-verify/" + self.email) + "/"
+        ) + str(token)
+
 
         mailjet = Client(auth=(settings.MAILJET_API_KEY,
                                settings.MAILJET_API_SECRET), version='v3.1')
@@ -30,23 +32,19 @@ class Util:
                 {
                     "From": {
                         "Email": "okumujustine01@gmail.com",
-                        "Name": "justine@JobsUg"
+                        "Name": "justine@JobsUg",
                     },
-                    "To": [
-                        {
-                            "Email": user.email,
-                            "Name": user.first_name
-                        }
-                    ],
+                    "To": [{"Email": self.email, "Name": self.first_name}],
                     "Subject": "JobsUg Registration!",
                     "TextPart": "Welcome to JobsUg!",
-                    "HTMLPart": "<div><h3>Dear " + user.first_name + "</h3> <br/> click here to verify your email address.<h1><a href="+absurl+">Click Here</a></h1> <br/> Or you can follow the link below.<br/> "+absurl+"</div>"
+                    "HTMLPart": f"<div><h3>Dear {self.first_name}</h3> <br/> click here to verify your email address.<h1><a href={absurl}>Click Here</a></h1> <br/> Or you can follow the link below.<br/> {absurl}</div>",
                 }
             ]
         }
+
         mailjet.send.create(data=data)
 
-    def send_reset_password_link(user, password_reset_url):
+    def send_reset_password_link(self, password_reset_url):
 
         mailjet = Client(auth=(settings.MAILJET_API_KEY,
                                settings.MAILJET_API_SECRET), version='v3.1')
@@ -55,18 +53,14 @@ class Util:
                 {
                     "From": {
                         "Email": "okumujustine01@gmail.com",
-                        "Name": "justine@JobsUg"
+                        "Name": "justine@JobsUg",
                     },
-                    "To": [
-                        {
-                            "Email": user.email,
-                            "Name": user.first_name
-                        }
-                    ],
+                    "To": [{"Email": self.email, "Name": self.first_name}],
                     "Subject": "JobsUg Password Reset!",
                     "TextPart": "Thanks for using JobsUg!",
-                    "HTMLPart": "<div><h3>Dear " + user.first_name + "</h3> <br/> click here to reset your password.<h1><a href="+password_reset_url+">Click Here</a></h1> <br/> Or you can follow the link below.<br/> "+password_reset_url+" < /div >"
+                    "HTMLPart": f"<div><h3>Dear {self.first_name}</h3> <br/> click here to reset your password.<h1><a href={password_reset_url}>Click Here</a></h1> <br/> Or you can follow the link below.<br/> {password_reset_url} < /div >",
                 }
             ]
         }
+
         mailjet.send.create(data=data)

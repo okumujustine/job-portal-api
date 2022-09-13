@@ -40,11 +40,12 @@ def custom_exception_handler(exc, context):
 
             return response
 
-        if "JobListView" in str(context['view']):
-            if response.data.get("application_link", None):
-                response.data = error_template_to_error_key(
-                    response.data.get("application_link")[0])
-                return response
+        if "JobListView" in str(context['view']) and response.data.get(
+            "application_link", None
+        ):
+            response.data = error_template_to_error_key(
+                response.data.get("application_link")[0])
+            return response
 
         if "SetNewPasswordAPIView" in str(context['view']):
 
