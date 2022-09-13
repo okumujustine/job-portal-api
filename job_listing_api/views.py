@@ -65,8 +65,7 @@ class JobFilterView(generics.ListAPIView):
     pagination_class = JobPageNumberPagination
 
     def get_queryset(self):
-        qs = jobs_filter(self.request).order_by('-published')
-        return qs
+        return jobs_filter(self.request).order_by('-published')
 
 
 # admin job requests view starts from here
@@ -90,8 +89,7 @@ class AdminUserJobListView(generics.ListAPIView):
     pagination_class = JobApplicationsPageNumberPagination
 
     def get_queryset(self):
-        qs = admin_user_jobs_filter(self.request)
-        return qs
+        return admin_user_jobs_filter(self.request)
 
 
 class EmployerStatsView(views.APIView):
@@ -120,15 +118,14 @@ class EmployeeAppliedJobView(views.APIView):
 
     def post(self, request, format=None):
         serializer = UserAppliedJobSerializer(data=request.data)
-        if serializer.is_valid():
-            job_id = serializer.data.get("job")
-            applicant_id = serializer.data.get("applicant")
-            userJob = ApplyJob.objects.filter(
-                job=job_id, applicant=applicant_id)
-            user_email = [user.email for user in userJob]
-            return Response(user_email, status=status.HTTP_200_OK)
-        else:
+        if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        job_id = serializer.data.get("job")
+        applicant_id = serializer.data.get("applicant")
+        userJob = ApplyJob.objects.filter(
+            job=job_id, applicant=applicant_id)
+        user_email = [user.email for user in userJob]
+        return Response(user_email, status=status.HTTP_200_OK)
 
 
 class GetEmployeeApplicationsView(generics.ListCreateAPIView):

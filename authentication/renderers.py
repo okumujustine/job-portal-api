@@ -8,7 +8,6 @@ class UserRenderer(renderers.JSONRenderer):
     def render(self, data, accepted_media_type=None, renderer_context=None):
         response = ''
         if 'ErrorDetail' in str(data):
-            response = json.dumps({'errors': data})
+            return json.dumps({'errors': data})
         else:
-            response = json.dumps({'data': data})
-        return response
+            return json.dumps({'data': data})

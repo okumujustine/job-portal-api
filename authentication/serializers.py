@@ -124,8 +124,6 @@ class LoginSerializer(serializers.ModelSerializer):
             'profile_owner': user.profile_owner
         }
 
-        return super().validate(attrs)
-
 
 class ResetPasswordEmailRequestSerializer(serializers.Serializer):
     email = serializers.EmailField(min_length=2)
